@@ -1,25 +1,48 @@
 import sys
-from pathlib import Path
-from colorama import Fore
 
-def show_dir(path_str):
-    path = Path(path_str)
-    if not path.is_dir():
-        print(Fore.RED + "Це не директорія або її не існує!")
-        return
+def parse_log_line(line: str) -> dict:
+    parts = line.split(' ', 3)
+    log_dict = {
+        'date': parts[0],
+        'time': parts[1],
+        'level': parts[2],
+        'message': parts[3]
+    }
+    return log_dict
 
-    print(Fore.BLUE + str(path.resolve()))
-    for item in path.iterdir():
-        if item.is_file():
-            print(Fore.GREEN + item.name)
-        elif item.is_dir():
-            show_dir(item)
+def load_logs(file_path: str) -> list:
+    logs = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            line = line.strip()
+            log = parse_log_line(line)
+            logs.append(log)
+    return logs
 
-def main():
-    if len(sys.argv) < 2:
-        print("Вкажіть шлях до директорії!")
-    else:
-        show_dir(sys.argv[1])
+def filter_logs_by_level(logs: list, level: str) -> list:
+    filtered = [log for log in logs if log['level'] == level]
+    return filtered
 
-if __name__ == "__main__":
-    main()
+def count_logs_by_level(logs: list) -> dict:
+    counts = {}
+    for log in logs:
+        level = log['level']
+        if level in counts:
+            counts[level] += 1
+        else:
+            counts[level] = 1
+    return counts
+
+def display_log_counts(counts: dict):
+    print("Рівень логування | Кількість")
+    print("-----------------|----------")
+    for level, count in counts.items():
+        print(f"{level:<17}| {count:<8}")
+
+
+logs = load_logs("c:\\Users\\yarem\\Documents\\goit-algo-hw-05\\ThirdTask\\logfile.log")
+counts = count_logs_by_level(logs)
+display_log_counts(counts)
+
+
+
