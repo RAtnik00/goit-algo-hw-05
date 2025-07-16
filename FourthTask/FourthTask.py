@@ -12,9 +12,11 @@ def input_error(func):
     return inner
 
 def parse_input(user_input):
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
-    return cmd, *args
+    parts = user_input.strip().split()
+    if not parts:
+        return '', []
+    cmd, *args = parts
+    return cmd.lower(), args
 
 @input_error
 def add_contact(args, contacts):
@@ -48,7 +50,7 @@ def main():
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
-        command, *args = parse_input(user_input)
+        command, args = parse_input(user_input)
 
         if command in ["close", "exit"]:
             print("Good bye!")
