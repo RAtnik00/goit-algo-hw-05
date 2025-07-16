@@ -39,10 +39,21 @@ def display_log_counts(counts: dict):
     for level, count in counts.items():
         print(f"{level:<17}| {count:<8}")
 
+if len(sys.argv) < 2:
+    sys.exit(1)
 
-logs = load_logs("c:\\Users\\yarem\\Documents\\goit-algo-hw-05\\ThirdTask\\logfile.log")
+file_path = sys.argv[1]
+logs = load_logs(file_path)
+
 counts = count_logs_by_level(logs)
 display_log_counts(counts)
+
+if len(sys.argv) > 2:
+    level = sys.argv[2].upper()
+    filtered = filter_logs_by_level(logs, level)
+    print(f"\nДеталі логів для рівня '{level}':")
+    for log in filtered:
+        print(f"{log['date']} {log['time']} - {log['message']}")
 
 
 
